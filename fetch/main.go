@@ -13,19 +13,32 @@ import (
 	"os"
 )
 
+func print(url string) error {
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s", data)
+
+	return nil
+}
+
 func main() {
-	for _, arg := range os.Args[1:] {
-		resp, err := http.Get(arg)
+
+	for _, url := range os.Args[1:] {
+
+		err := print(url)
 		if err != nil {
 			log.Print(err)
 			continue
 		}
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-		resp.Body.Close()
-		fmt.Printf("%s", data)
 	}
 }
